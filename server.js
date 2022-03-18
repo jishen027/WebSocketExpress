@@ -28,7 +28,13 @@ io.on('connection', socket => {
     socket.emit('message', formatMessage(botName, "welcome to the chat room"))
 
     // all clients except the  connecting one
-    socket.broadcast.to(user.room).emit('message', formatMessage(botName, `${user.username} join to the chat`))
+    socket.broadcast.to(user.room).emit('message', formatMessage(botName, `${user.username} has join to the chat`))
+
+    //send user an room info
+    io.to(user.room).emit('roomUsers', {
+      room: user.room,
+      users: getRoomUsers(user.room)
+    })
 
     // all clients
     // io.emit()
@@ -39,6 +45,12 @@ io.on('connection', socket => {
       if (user) {
         io.to(user.room).emit('message', formatMessage(botName, `${user.username} left the chat`))
       }
+      
+       //send user an room info
+      io.to(user.room).emit('roomUsers', {
+        room: user.room,
+        users: getRoomUsers(user.room)
+      })
     })
 
   })
